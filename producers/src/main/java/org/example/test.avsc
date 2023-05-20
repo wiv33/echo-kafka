@@ -1,0 +1,35 @@
+{
+  "namespace": "kafka.study",
+  "type": "record",
+  "name": "User",
+  "fields": [
+    {
+      "name": "order_id",
+      "type": "string"
+    },
+    {
+      "name": "shop",
+      "type": "string"
+    },
+    {
+      "name": "pizza_name",
+      "type": "string"
+    },
+    {
+      "name": "customer_name",
+      "type": "string"
+    },
+    {
+      "name": "phone_number",
+      "type": "string"
+    },
+    {
+      "name": "address",
+      "type": "string"
+    },
+    {
+      "name": "time",
+      "type": "string"
+    }
+  ]
+}
