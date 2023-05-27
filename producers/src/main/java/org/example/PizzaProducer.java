@@ -12,6 +12,9 @@ import org.apache.kafka.common.serialization.StringSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/*
+  config 설정 정보 readme.md 참고
+ */
 
 public class PizzaProducer {
 
@@ -94,12 +97,14 @@ public class PizzaProducer {
       StringSerializer.class.getName());
     props.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
       StringSerializer.class.getName());
-    props.setProperty(ProducerConfig.ACKS_CONFIG, "1");
+//    props.setProperty(ProducerConfig.ACKS_CONFIG, "1");
+    props.setProperty(ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG, "29000");
 
     // send to kafka message key null and value "hello world"
     var producer = new KafkaProducer<String, String>(props);
 
-    sendPizzaMessage(producer, TOPIC, -1, 10, 100, 100, true);
+    sendPizzaMessage(producer, TOPIC, -1, 10, 100, 100,
+      false);
     producer.close();
   }
 }
