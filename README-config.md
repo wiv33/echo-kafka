@@ -158,7 +158,7 @@ class Producer {
 
 ## ConsumerConfig
 
-- **fetch.min.bytes**
+- **fetch.max.bytes**
     - Fetcher가 한번에 가져올 수 있는 최대 데이터 크기.
     - 기본값 50MB
 - **max.partition.fetch.bytes**
@@ -166,3 +166,31 @@ class Producer {
 - **max.poll.records**
     - Fetcher가 한번에 가져올 수 있는 레코드 수.
     - 기본값 500
+- **fetch.min.bytes**
+  - Fetcher가 record들을 읽어오는 최소 byte
+  - 브로커는 지정된 fetch.min.bytes 이상의 새로운 메시지가 쌓일 때까지 전송하지 않음.
+  - 기본값 1
+- **fetch.max.wait.ms**
+  - 브로커에 fetch.min.bytes 이상의 메시지가 쌓일 때까지 최대 대기 시간.
+  - 기본은 500ms
+
+
+## example
+
+1. KafkaConsumer.poll(1000)
+2. fetch.min.bytes = 16384 (16KB)
+3. fetch.max.wait.ms = 500
+4. fetch.max.bytes = 52428800 (50MB)
+5. max.partition.fetch.bytes = 1048576 (1MB)
+6. max.poll.records = 500
+
+### 해설
+1. 가져올 데이터가 한 건도 없으면 1000ms 동안 대기
+2. 가져올 과거의 데이터가 많을 경우 `max.partition.fetch.bytes`의 배치 크기 설정 (공식 문서에 나와있는 얘기는 아님.)
+3. 데이터가 많지 않을 경우 `fetch.min.bytes`의 배치 크기 설정
+4. 가장 최신의 Offset 데이터를 가져오고 있다면 `fetch.min.bytes`만큼 가져오고, 
+5. `fetch.min.bytes`만큼 쌓이지 않았다면, `fetch.max.wait.ms`만큼 대기 후 결과 반환
+6. 오랜 과거 offset 데이터를 가져온다면 최대 `max.partition.fetch.bytes`만큼 파티션에서 읽은 뒤 반환
+7. `max.partition.fetch.bytes`에 도달하지 못해도 가장 최신의 offset에 도달하면 반환
+8. 토픽에 파티션이 많아도 가져오는 데이터양은 `fetch.max.bytes`로 제한
+9. Fetcher가 Linked Queue에서 가져오는 레코드의 개수는 `max.poll.records`로 제한
